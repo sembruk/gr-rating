@@ -22,7 +22,7 @@ class SfrHtmlParser(object):
                 year_of_birth = self.__class__.get_td_text(td_nodes[4])
                 score = self.__class__.int_or_null(self.__class__.get_td_text(td_nodes[6])[0])
                 for i in range(len(surname)):
-                    group.append(ParticipantWithScore(name[i], surname[i], year_of_birth[i], score))
+                    group.append(ParticipantWithScore(self.__class__.first_word(name[i]), surname[i], year_of_birth[i], score))
             
             self.participants[group_name] = group
         return self.participants
@@ -37,6 +37,10 @@ class SfrHtmlParser(object):
             return int(s)
         except ValueError as ve:
             return 0
+
+    @staticmethod
+    def first_word(s):
+        return s.split(None, 1)[0]
 
 
 
