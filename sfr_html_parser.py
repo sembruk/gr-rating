@@ -1,5 +1,5 @@
 from lxml import html
-from participant import Participant
+from participant import *
 
 class SfrHtmlParser(object):
     
@@ -9,8 +9,11 @@ class SfrHtmlParser(object):
     def parse(self, html_string):
         tree = html.fromstring(html_string)
         h2_nodes = tree.xpath('//h2')
+        self.participants = {}
         for h2_node in h2_nodes:
-            print(h2_node.text)
+            group_name = h2_node.text
+            group = []
+
             table_row_nodes = h2_node.xpath('.//following::table[1]/tr')[1:]
             for tr_node in table_row_nodes:
                 td_nodes = tr_node.xpath('.//td')
@@ -19,7 +22,10 @@ class SfrHtmlParser(object):
                 year_of_birth = self.__class__.get_td_text(td_nodes[4])
                 score = self.__class__.int_or_null(self.__class__.get_td_text(td_nodes[6])[0])
                 for i in range(len(surname)):
-                    print(Participant(name[i], surname[i], year_of_birth[i]), score)
+                    group.append(ParticipantWithScore(name[i], surname[i], year_of_birth[i], score))
+            
+            self.participants[group_name] = group
+        return self.participants
 
     @staticmethod
     def get_td_text(td_node):

@@ -22,3 +22,10 @@ class Participant(object):
     #            surname,
     #            result.gender)
         
+
+class ParticipantWithScore(Participant):
+    
+    def __init__(self, name, surname, year_of_birth, score):
+        super().__init__(name, surname, year_of_birth)
+        self.score = score
+
