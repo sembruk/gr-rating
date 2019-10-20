@@ -1,26 +1,34 @@
-from russiannames import NamesParser
-import participant
+from lxml import html
+from participant import Participant
 
 class SfrHtmlParser(object):
-    names_parser = NamesParser()
     
     def __init__(self):
         pass
 
-    def parse_name(self, name, surname):
-        result = names_parser.parse(name)
-        if result['parsed']:
-            return Participant(
-                name,
-                surname,
-                result.gender)
+    def parse(self, html_string):
+        tree = html.fromstring(html_string)
+        h2_node = tree.xpath('//h2')[5]
+        print(h2_node.text)
+        table_row_nodes = h2_node.xpath('.//following::table[1]/tr')[1:]
+        for tr_node in table_row_nodes:
+            td_nodes = tr_node.xpath('.//td')
+            surname = self.__class__.get_td_text(td_nodes[2])
+            name = self.__class__.get_td_text(td_nodes[3])
+            year_of_birth = self.__class__.get_td_text(td_nodes[4])
+            score = self.__class__.int_or_null(self.__class__.get_td_text(td_nodes[6]))
+            print(Participant(name, surname, year_of_birth), score)
 
-    def parse_year_of_birth(self, participant, yob_string):
-        year_of_birth = int(yob_string)
-        participant.set_year_of_birth(year_of_birth)
+    @staticmethod
+    def get_td_text(td_node):
+        return td_node.xpath('.//nobr')[0].text
 
-    def parse_score(self, score_string):
-        return int(score_string)
-        
+    @staticmethod
+    def int_or_null(s):
+        try:
+            return int(s)
+        except ValueError as ve:
+            return 0
+
 
 
