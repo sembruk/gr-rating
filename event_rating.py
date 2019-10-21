@@ -17,6 +17,9 @@ class KindRating(object):
         max_score = self.participants[0].get_score()
         for p in self.participants:
             p.set_rating(p.get_score()*100/max_score)
+
+    def get_participants(self):
+        return self.participants
         
     def __str__(self):
         ret_str = ''
@@ -25,24 +28,24 @@ class KindRating(object):
 
 class EventRating(object):
 
-    def __init__(self, participants):
-        self.rating = {}
+    @classmethod
+    def calculate(cls, participants):
+        rating = {}
         for participant in participants:
-            kind = self.__class__._extract_rogaining_kind(participant.get_group())
+            kind = cls._extract_rogaining_kind(participant.get_group())
             if participant.ismale():
                 kind += '_m'
             else:
                 kind += '_f'
-            kind_rating = self.rating.setdefault(kind, KindRating(kind))
+            kind_rating = rating.setdefault(kind, KindRating(kind))
             kind_rating.add_participant(participant)
 
-    def print(self):
-        for kind in self.rating:
-            print(kind)
-            self.rating[kind].sort()
-            self.rating[kind].calculate_rating()
-            print(self.rating[kind])
-
+        all_participants = []
+        for kind in rating:
+            rating[kind].sort()
+            rating[kind].calculate_rating()
+            all_participants.extend(rating[kind].get_participants())
+        return all_participants
 
     @staticmethod
     def _extract_rogaining_kind(group):

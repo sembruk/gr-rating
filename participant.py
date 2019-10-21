@@ -10,7 +10,7 @@ class ParticipantBase(object):
         self.gender = GenderByName.get_gender_by_name(self.name)
     
     def hash(self):
-        return '_'.join((self.name, self.surname, self.year_of_birth))
+        return ' '.join((self.name, self.surname, self.year_of_birth))
 
     def __str__(self):
         return ' '.join((self.name, self.surname, self.year_of_birth, self.gender))
@@ -35,6 +35,9 @@ class Participant(ParticipantBase):
 
     def set_rating(self, rating):
         self.rating = rating
+
+    def get_rating(self):
+        return self.rating
 
     def __str__(self):
         return super().__str__() + ' ' + ' '.join((self.group, str(self.score), '{:.2f}'.format(self.rating)))
