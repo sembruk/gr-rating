@@ -6,7 +6,7 @@ class SfrHtmlParser(object):
     def __init__(self):
         pass
 
-    def parse(self, html_string):
+    def parse_results(self, html_string):
         tree = html.fromstring(html_string)
         h2_nodes = tree.xpath('//h2')
         self.participants = {}
