@@ -1,6 +1,6 @@
 from names.gender_by_name import GenderByName
 
-class Participant(object):
+class ParticipantBase(object):
     #names_parser = NamesParser()
 
     def __init__(self, name, surname, year_of_birth):
@@ -15,10 +15,23 @@ class Participant(object):
     def __str__(self):
         return ' '.join((self.name, self.surname, self.year_of_birth, self.gender))
 
+    def ismale(self):
+        return self.gender == 'm'
 
-class ParticipantWithScore(Participant):
+
+class Participant(ParticipantBase):
     
-    def __init__(self, name, surname, year_of_birth, score):
+    def __init__(self, name, surname, year_of_birth, score, group):
         super().__init__(name, surname, year_of_birth)
         self.score = score
+        self.group = group
+
+    def get_group(self):
+        return self.group
+
+    def get_score(self):
+        return self.score
+
+    def __str__(self):
+        return super().__str__() + ' ' + ' '.join((self.group, str(self.score)))
 
