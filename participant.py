@@ -25,6 +25,7 @@ class Participant(ParticipantBase):
         super().__init__(name, surname, year_of_birth)
         self.score = score
         self.group = group
+        self.rating = 0
 
     def get_group(self):
         return self.group
@@ -32,6 +33,9 @@ class Participant(ParticipantBase):
     def get_score(self):
         return self.score
 
+    def set_rating(self, rating):
+        self.rating = rating
+
     def __str__(self):
-        return super().__str__() + ' ' + ' '.join((self.group, str(self.score)))
+        return super().__str__() + ' ' + ' '.join((self.group, str(self.score), '{:.2f}'.format(self.rating)))
 
