@@ -4,6 +4,7 @@ import json
 from sfr_html_parser import SfrHtmlParser
 from event_rating import EventRating
 from year_rating import YearRating
+from html_generator import HtmlGenerator
 
 def main():
     with open('urls.json') as urls_json_file:
@@ -26,7 +27,8 @@ def main():
                     year_rating_men.add_participant_event_rating(p)
                 else:
                     year_rating_women.add_participant_event_rating(p)
-        year_rating_men.print()
+        #year_rating_men.print()
+        html_generator = HtmlGenerator(year_rating_men)
 
 if __name__ == '__main__':
     main()

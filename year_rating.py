@@ -41,9 +41,9 @@ class YearRating(object):
 
     def sort_participants(self):
         s = self.participants.values()
-        s = sorted(s, key=lambda p: p.get_sum())
-        s = sorted(s, key=lambda p: p.get_n_events())
-        s = sorted(s, key=lambda p: p.get_sum_of_6_results())
+        s = sorted(s, reverse=True, key=lambda p: p.get_sum())
+        s = sorted(s, reverse=True, key=lambda p: p.get_n_events())
+        s = sorted(s, reverse=True, key=lambda p: p.get_sum_of_6_results())
         return s
 
     def print(self):
