@@ -26,7 +26,7 @@ def main():
                     year_rating_men.add_participant_event_rating(p)
                 else:
                     year_rating_women.add_participant_event_rating(p)
-            year_rating_men.print()
+        year_rating_men.print()
 
 if __name__ == '__main__':
     main()
