@@ -16,16 +16,22 @@ def main():
             print(rogaine['name'])
             year_rating_men.add_event(rogaine['name'])
             year_rating_women.add_event(rogaine['name'])
-            r = requests.get(rogaine['url'])
-            r.raise_for_status()
+            urls = rogaine['url']
+            if type(urls) != list:
+                urls = [urls]
+            participants = []
+            for url in urls:
+                r = requests.get(url)
+                r.raise_for_status()
 
-            sfr_html_parser = SfrHtmlParser()
+                sfr_html_parser = SfrHtmlParser()
 
-            if re.search(r'windows-1251', r.text, flags=re.IGNORECASE):
-                r.encoding = 'cp1251'
+                if re.search(r'windows-1251', r.text, flags=re.IGNORECASE):
+                    r.encoding = 'cp1251'
 
-            participants = sfr_html_parser.parse_results(r.text)
-            participants_with_event_rating = EventRating.calculate(participants)
+                participants.append(sfr_html_parser.parse_results(r.text))
+
+            participants_with_event_rating = EventRating.calculate(participants[0])
             for p in participants_with_event_rating:
                 if p.ismale():
                     year_rating_men.add_participant_event_rating(p)
