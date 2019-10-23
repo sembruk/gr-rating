@@ -13,24 +13,57 @@ class HtmlGenerator(object):
                 with tag('style'):
                     text('table { border-collapse: collapse; } ')
                     text('table, td, th { border: 1px solid black; padding: 0 2px}')
+#                    text('''
+#.verticalTableHeader {
+#    text-align:center;
+#    white-space:nowrap;
+#    g-origin:50% 50%;
+#    -webkit-transform: rotate(270deg);
+#    -moz-transform: rotate(270deg);
+#    -ms-transform: rotate(270deg);
+#    -o-transform: rotate(270deg);
+#    transform: rotate(270deg);
+#    
+#}
+#.verticalTableHeader p {
+#    margin:0 -100% ;
+#    display:inline-block;
+#}
+#.verticalTableHeader p:before{
+#    content:'';
+#    width:0;
+#    padding-top:110%;/* takes width as reference, + 10% for faking some extra padding */
+#    display:inline-block;
+#    vertical-align:middle;
+#}
+#table {
+#    text-align: center;
+#    table-layout: fixed;
+#    width: 950px
+#}''')
             with tag('body'):
                 with tag('h1'):
                     text('GR Rating')
                 with tag('h2'):
                     text('Group')
-                with tag('table'):
+                with tag('table', ('border', '1')):
                     with tag('tr'):
-                        with tag('th'):
-                            text('Участник')
+                        with tag('th', klass='verticalTableHeader'):
+                            with tag('p'):
+                                text('Участник')
                         for h in year_rating.events:
-                            with tag('th'):
-                                text(h)
-                        with tag('th'):
-                            text('Сумма')
-                        with tag('th'):
-                            text('Сумма 6')
-                        with tag('th'):
-                            text('Место')
+                            with tag('th', klass='verticalTableHeader'):
+                                with tag('p'):
+                                    text(h)
+                        with tag('th', klass='verticalTableHeader'):
+                            with tag('p'):
+                                text('Сумма')
+                        with tag('th', klass='verticalTableHeader'):
+                            with tag('p'):
+                                text('Сумма 6')
+                        with tag('th', klass='verticalTableHeader'):
+                            with tag('p'):
+                                text('Место')
                     participants = year_rating.sort_participants()
                     for i in range(len(participants)):
                         p = participants[i]

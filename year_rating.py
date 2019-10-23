@@ -9,8 +9,9 @@ class ParticipantYearRating(object):
         self.sum_of_6_results = None
 
     def add_event_rating(self, event_index, event_rating):
-        self.rating[event_index] = event_rating
-        self.sum += event_rating
+        if event_rating > 0:
+            self.rating[event_index] = event_rating
+            self.sum += event_rating
 
     def get_n_events(self):
         return len(self.rating)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import requests
 import json
+import re
 from sfr_html_parser import SfrHtmlParser
 from event_rating import EventRating
 from year_rating import YearRating
@@ -19,7 +20,10 @@ def main():
             r.raise_for_status()
 
             sfr_html_parser = SfrHtmlParser()
-            r.encoding = 'cp1251'
+
+            if re.search(r'windows-1251', r.text, flags=re.IGNORECASE):
+                r.encoding = 'cp1251'
+
             participants = sfr_html_parser.parse_results(r.text)
             participants_with_event_rating = EventRating.calculate(participants)
             for p in participants_with_event_rating:
