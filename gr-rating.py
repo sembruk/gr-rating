@@ -65,7 +65,9 @@ def main():
                 else:
                     year_rating_women.add_participant_event_rating(p)
         #year_rating_men.print()
-        html_generator = HtmlGenerator(year_rating_men)
+        html_generator = HtmlGenerator(year_rating_men, year_rating_women)
+        with open('/tmp/tmp.html', 'w') as output_html_file:
+            output_html_file.write(html_generator.html())
 
 if __name__ == '__main__':
     main()

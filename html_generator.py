@@ -4,16 +4,18 @@ from year_rating import YearRating
 
 class HtmlGenerator(object):
 
-    def __init__(self, year_rating):
-        doc, tag, text = Doc().tagtext()
-        doc.asis('<!DOCTYPE html>')
-        with tag('html'):
-            with tag('head'):
-                doc.stag('meta', ('http-equiv', 'Content-Type'), ('content', 'text/html; charset=utf-8'))
-                with tag('style'):
-                    text('table { border-collapse: collapse; } ')
-                    text('table, td, th { border: 1px solid black; padding: 0 2px}')
-#                    text('''
+    def __init__(self, year_rating_men, year_rating_women):
+        self.doc, self.tag, self.text = Doc().tagtext()
+
+        title = 'Рейтинг кубка «Золотой маршрут 2019»'
+        self.doc.asis('<!DOCTYPE html>')
+        with self.tag('html'):
+            with self.tag('head'):
+                self.doc.stag('meta', ('http-equiv', 'Content-Type'), ('content', 'text/html; charset=utf-8'))
+                with self.tag('style'):
+                    self.text('table { border-collapse: collapse; } ')
+                    self.text('table, td, th { border: 1px solid black; padding: 0 2px}')
+#                    self.text('''
 #.verticalTableHeader {
 #    text-align:center;
 #    white-space:nowrap;
@@ -41,47 +43,67 @@ class HtmlGenerator(object):
 #    table-layout: fixed;
 #    width: 950px
 #}''')
-            with tag('body'):
-                with tag('h1'):
-                    text('GR Rating')
-                with tag('h2'):
-                    text('Group')
-                with tag('table', ('border', '1')):
-                    with tag('tr'):
-                        with tag('th', klass='verticalTableHeader'):
-                            with tag('p'):
-                                text('Участник')
-                        for h in year_rating.events:
-                            with tag('th', klass='verticalTableHeader'):
-                                with tag('p'):
-                                    text(h)
-                        with tag('th', klass='verticalTableHeader'):
-                            with tag('p'):
-                                text('Сумма')
-                        with tag('th', klass='verticalTableHeader'):
-                            with tag('p'):
-                                text('Сумма 6')
-                        with tag('th', klass='verticalTableHeader'):
-                            with tag('p'):
-                                text('Место')
-                    participants = year_rating.sort_participants()
-                    for i in range(len(participants)):
-                        p = participants[i]
-                        with tag('tr'):
-                            with tag('td'):
-                                text(p.participant_name_str)
-                            for j in range(len(year_rating.events)):
-                                with tag('td'):
-                                    text(self.__class__.format_float(p.rating.get(j)))
-                            with tag('td'):
-                                text(self.__class__.format_float(p.get_sum()))
-                            with tag('td'):
-                                text(self.__class__.format_float(p.get_sum_of_6_results()))
-                            with tag('td'):
-                                text(i + 1)
+                with self.tag('title'):
+                    self.text(title)
+            with self.tag('body'):
+                with self.tag('h1'):
+                    self.text(title)
+                group_names = ('Мужчины', 'Женщины')
+                self._generate_refs(group_names, 0)
+                self._generate_table(year_rating_men, group_names[0])
+                self._generate_refs(group_names, 1)
+                self._generate_table(year_rating_women, group_names[1])
 
-        with open('/tmp/tmp.html', 'w') as output_html_file:
-            output_html_file.write(doc.getvalue())
+        self._html = self.doc.getvalue()
+
+    def html(self):
+        return self._html
+
+    def _generate_refs(self, group_names, index):
+        self.doc.stag('br')
+        self.doc.stag('a', ('name', group_names[index]))
+        for gn in group_names:
+            with self.tag('a', ('href', '#' + gn)):
+                self.text(gn)
+            self.doc.asis('\t')
+
+    def _generate_table(self, year_rating, group_name):
+        with self.tag('h2'):
+            self.text(group_name)
+        with self.tag('table', ('border', '1')):
+            with self.tag('tr'):
+                with self.tag('th', klass='verticalTableHeader'):
+                    with self.tag('p'):
+                        self.text('Участник')
+                for h in year_rating.events:
+                    with self.tag('th', klass='verticalTableHeader'):
+                        with self.tag('p'):
+                            self.text(h)
+                with self.tag('th', klass='verticalTableHeader'):
+                    with self.tag('p'):
+                        self.text('Сумма')
+                with self.tag('th', klass='verticalTableHeader'):
+                    with self.tag('p'):
+                        self.text('Сумма 6')
+                with self.tag('th', klass='verticalTableHeader'):
+                    with self.tag('p'):
+                        self.text('Место')
+            participants = year_rating.sort_participants()
+            for i in range(len(participants)):
+                p = participants[i]
+                with self.tag('tr'):
+                    with self.tag('td'):
+                        self.text(p.participant_name_str)
+                    for j in range(len(year_rating.events)):
+                        with self.tag('td'):
+                            self.text(self.__class__.format_float(p.rating.get(j)))
+                    with self.tag('td'):
+                        self.text(self.__class__.format_float(p.get_sum()))
+                    with self.tag('td'):
+                        self.text(self.__class__.format_float(p.get_sum_of_6_results()))
+                    with self.tag('td'):
+                        self.text(i + 1)
+
 
     @staticmethod
     def format_float(f):
