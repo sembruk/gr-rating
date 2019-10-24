@@ -33,6 +33,12 @@ class Participant(ParticipantBase):
     def get_score(self):
         return self.score
 
+    def set_score(self, score):
+        self.score = score
+
+    def inc_score(self, inc):
+        self.score += inc
+
     def set_rating(self, rating):
         self.rating = rating
 
