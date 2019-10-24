@@ -1,21 +1,19 @@
 import re
+import operator
 from participant import Participant
     
 class KindRating(object):
     
     def __init__(self, id_):
         self.id = id_
-        self.participants = []
+        self.participants = {}
 
     def add_participant(self, participant: Participant):
-        self.participants.append(participant)
-
-    def sort(self):
-        self.participants.sort(reverse=True, key=lambda p: p.get_score())
+        self.participants[participant.hash()] = participant
 
     def calculate_rating(self):
-        max_score = self.participants[0].get_score()
-        for p in self.participants:
+        max_score = max(self.participants.values(), key=operator.methodcaller('get_score')).get_score()
+        for p in self.participants.values():
             p.set_rating(p.get_score()*100/max_score)
 
     def get_participants(self):
@@ -32,7 +30,7 @@ class EventRating(object):
     def calculate(cls, participants):
         rating = {}
         for participant in participants:
-            kind = cls._extract_rogaining_kind(participant.get_group())
+            kind = cls.extract_rogaining_kind(participant.get_group())
             if participant.ismale():
                 kind += '_m'
             else:
@@ -40,15 +38,14 @@ class EventRating(object):
             kind_rating = rating.setdefault(kind, KindRating(kind))
             kind_rating.add_participant(participant)
 
-        all_participants = []
+        all_participants = {}
         for kind in rating:
-            rating[kind].sort()
             rating[kind].calculate_rating()
-            all_participants.extend(rating[kind].get_participants())
+            all_participants.update(rating[kind].get_participants())
         return all_participants
 
     @staticmethod
-    def _extract_rogaining_kind(group):
+    def extract_rogaining_kind(group):
         match_result = re.match(r'[\w-]+[\d.,]+(\w)', group)
         try:
             return match_result.group(1)

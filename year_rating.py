@@ -1,3 +1,4 @@
+import operator
 from participant import Participant
 
 class ParticipantYearRating(object):
@@ -9,9 +10,8 @@ class ParticipantYearRating(object):
         self.sum_of_6_results = None
 
     def add_event_rating(self, event_index, event_rating):
-        if event_rating > 0:
-            self.rating[event_index] = event_rating
-            self.sum += event_rating
+        self.rating[event_index] = event_rating
+        self.sum += event_rating
 
     def get_n_events(self):
         return len(self.rating)
@@ -37,14 +37,15 @@ class YearRating(object):
         self.current_event_index = len(self.events) - 1
 
     def add_participant_event_rating(self, participant: Participant):
-        participant_year_rating = self.participants.setdefault(participant.hash(), ParticipantYearRating(participant.hash()))
-        participant_year_rating.add_event_rating(self.current_event_index, participant.get_rating())
+        if participant.get_rating() > 0:
+            participant_year_rating = self.participants.setdefault(participant.hash(), ParticipantYearRating(participant.hash()))
+            participant_year_rating.add_event_rating(self.current_event_index, participant.get_rating())
 
     def sort_participants(self):
         s = self.participants.values()
-        s = sorted(s, reverse=True, key=lambda p: p.get_sum())
-        s = sorted(s, reverse=True, key=lambda p: p.get_n_events())
-        s = sorted(s, reverse=True, key=lambda p: p.get_sum_of_6_results())
+        s = sorted(s, reverse=True, key=operator.methodcaller('get_sum'))
+        s = sorted(s, reverse=True, key=operator.methodcaller('get_n_events'))
+        s = sorted(s, reverse=True, key=operator.methodcaller('get_sum_of_6_results'))
         return s
 
     def print(self):
